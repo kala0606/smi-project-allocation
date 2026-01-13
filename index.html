@@ -954,7 +954,8 @@
                 </div>
                 <h2>Preferences Submitted!</h2>
                 <p>Your project preferences have been recorded successfully. You will be notified about your allocation soon.</p>
-                <button class="submit-another-btn" onclick="resetForm()">Submit Another Response</button>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">Need to make changes? Use the same Student ID to update your preferences.</p>
+                <button class="submit-another-btn" onclick="editResponse()">Edit My Response</button>
             </div>
         </main>
     </div>
@@ -1258,10 +1259,16 @@
                 showToast('Preferences saved locally!', 'success');
             }
 
+            // Save for edit functionality
+            lastSubmission = submissionData;
+
             // Show success message
             form.style.display = 'none';
             successMessage.classList.add('visible');
         }
+
+        // Store last submission for edit functionality
+        let lastSubmission = null;
 
         function resetForm() {
             form.reset();
@@ -1270,6 +1277,29 @@
             submitBtn.disabled = true;
             form.style.display = 'block';
             successMessage.classList.remove('visible');
+            lastSubmission = null;
+        }
+
+        function editResponse() {
+            // Go back to form with previous data pre-filled
+            form.style.display = 'block';
+            successMessage.classList.remove('visible');
+            
+            if (lastSubmission) {
+                // Pre-fill the form with last submission data
+                document.getElementById('studentId').value = lastSubmission.studentId;
+                document.getElementById('studentName').value = lastSubmission.studentName;
+                disciplineSelect.value = lastSubmission.discipline;
+                
+                // Trigger discipline change to show projects
+                handleDisciplineChange();
+                
+                // Pre-select the projects after a small delay (to let projects render)
+                setTimeout(() => {
+                    selectedProjects = [lastSubmission.choiceA, lastSubmission.choiceB];
+                    updateSelectionUI();
+                }, 100);
+            }
         }
 
         function toggleAdminPanel() {
