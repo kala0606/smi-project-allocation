@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMI Project Preference Form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-input: #1a1a24;
+            --accent-primary: #e85d04;
+            --accent-secondary: #f48c06;
+            --accent-glow: rgba(232, 93, 4, 0.3);
+            --text-primary: #f5f5f7;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border-color: #2a2a3a;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-pattern {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(232, 93, 4, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(244, 140, 6, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(232, 93, 4, 0.03) 0%, transparent 60%);
+            animation: pulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .semester-badge {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1.25rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--accent-secondary);
+            font-weight: 500;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.3),
+                0 20px 50px -12px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 2px;
+        }
+
+        /* Form Fields */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        input::placeholder {
+            color: var(--text-muted);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.25rem;
+            padding-right: 3rem;
+        }
+
+        select option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        /* Projects Grid */
+        .projects-container {
+            display: none;
+        }
+
+        .projects-container.visible {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .projects-info {
+            background: linear-gradient(135deg, rgba(232, 93, 4, 0.1), rgba(244, 140, 6, 0.05));
+            border: 1px solid rgba(232, 93, 4, 0.2);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--accent-secondary);
+        }
+
+        .projects-info strong {
+            color: var(--accent-primary);
+        }
+
+        .projects-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .project-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .project-item:hover {
+            border-color: var(--accent-primary);
+            background: rgba(232, 93, 4, 0.05);
+        }
+
+        .project-item.selected {
+            border-color: var(--accent-primary);
+            background: rgba(232, 93, 4, 0.1);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        .project-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .project-checkbox {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-top: 2px;
+        }
+
+        .project-item.selected .project-checkbox {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .project-checkbox svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.2s ease;
+        }
+
+        .project-item.selected .project-checkbox svg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .project-details {
+            flex: 1;
+        }
+
+        .project-id {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .project-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .selection-badge {
+            flex-shrink: 0;
+            padding: 0.25rem 0.75rem;
+            background: var(--accent-primary);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+        }
+
+        .project-item.selected .selection-badge {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Selection Counter */
+        .selection-counter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: var(--bg-input);
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .counter-number {
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .counter-number.warning {
+            color: var(--error);
+        }
+
+        .counter-number.success {
+            color: var(--success);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 1.25rem 2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .submit-btn:hover::before {
+            opacity: 1;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(232, 93, 4, 0.5);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 3rem 2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .success-message.visible {
+            display: block;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success), #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        .success-message h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .submit-another-btn {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 2px solid var(--accent-primary);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-another-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* Admin Panel - Hidden by default */
+        .admin-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .admin-toggle.visible {
+            display: flex;
+        }
+
+        .admin-toggle:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .admin-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text-secondary);
+        }
+
+        .admin-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+            z-index: 99;
+        }
+
+        .admin-panel.visible {
+            transform: translateY(0);
+        }
+
+        .admin-content {
+            max-width: 720px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .admin-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .download-btn {
+            background: var(--accent-primary);
+            border: none;
+            color: white;
+        }
+
+        .download-btn:hover {
+            background: var(--accent-secondary);
+        }
+
+        .clear-btn {
+            background: transparent;
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .clear-btn:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        .sheets-btn {
+            background: #34a853;
+            border: none;
+            color: white;
+        }
+
+        .sheets-btn:hover {
+            background: #2d9148;
+        }
+
+        .config-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .config-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        /* Config Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.visible .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .modal-btn-secondary:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        .modal-btn-primary {
+            background: var(--accent-primary);
+            border: none;
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: var(--accent-secondary);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.connected {
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .status-dot.disconnected {
+            background: var(--text-muted);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .submit-btn.loading {
+            pointer-events: none;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateX(120%);
+            transition: transform 0.4s ease;
+            z-index: 1000;
+        }
+
+        .toast.visible {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-color: var(--success);
+        }
+
+        .toast.error {
+            border-color: var(--error);
+        }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--error);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem 1rem 6rem;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .form-card {
+                padding: 1.5rem;
+                border-radius: 16px;
+            }
+
+            .admin-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .admin-stats {
+                justify-content: center;
+            }
+
+            .admin-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">SMI Project Allocation</h1>
+            <p class="subtitle">School of Media & Immersive Experience</p>
+            <span class="semester-badge">8th Semester • 2026</span>
+        </header>
+
+        <main class="form-card">
+            <!-- Form -->
+            <form id="preferenceForm">
+                <div class="form-section">
+                    <h2 class="section-title">Student Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="studentId">Student ID *</label>
+                        <input type="text" id="studentId" name="studentId" placeholder="e.g., SMI24001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentName">Full Name *</label>
+                        <input type="text" id="studentName" name="studentName" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="discipline">Discipline *</label>
+                        <select id="discipline" name="discipline" required>
+                            <option value="">Select your discipline</option>
+                            <option value="BSSD">BSSD - Bachelor of Strategic Design</option>
+                            <option value="CAC">CAC - Creative Arts & Craft</option>
+                            <option value="CAP">CAP - Creative Arts Practice</option>
+                            <option value="CE">CE - Creative Expression</option>
+                            <option value="DMA">DMA - Digital Media Arts</option>
+                            <option value="FILM">FILM - Film Studies</option>
+                            <option value="HCD">HCD - Human-Centered Design</option>
+                            <option value="IADP">IADP - Integrated Art & Design Practice</option>
+                            <option value="IAIDP">IAIDP - Integrated Arts & Interdisciplinary Practice</option>
+                            <option value="PSD">PSD - Product & Service Design</option>
+                            <option value="VCSB">VCSB - Visual Communication & Strategic Branding</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="projects-container" id="projectsContainer">
+                    <div class="form-section">
+                        <h2 class="section-title">Project Preferences</h2>
+                        
+                        <div class="projects-info">
+                            <strong>Note:</strong> Select exactly <strong>2 projects</strong> as your preferences. Projects shown below are eligible for your discipline.
+                        </div>
+
+                        <div class="projects-grid" id="projectsGrid">
+                            <!-- Projects will be populated by JavaScript -->
+                        </div>
+
+                        <div class="selection-counter">
+                            <span>Selected:</span>
+                            <span class="counter-number" id="selectionCount">0</span>
+                            <span>/ 2 projects</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                    <span>Submit Preferences</span>
+                </button>
+            </form>
+
+            <!-- Success Message -->
+            <div class="success-message" id="successMessage">
+                <div class="success-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h2>Preferences Submitted!</h2>
+                <p>Your project preferences have been recorded successfully. You will be notified about your allocation soon.</p>
+                <button class="submit-another-btn" onclick="resetForm()">Submit Another Response</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin Toggle -->
+    <button class="admin-toggle" id="adminToggle" title="Admin Panel">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+    </button>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-content">
+            <div class="admin-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalSubmissions">0</div>
+                    <div class="stat-label">Submissions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="uniqueStudents">0</div>
+                    <div class="stat-label">Students</div>
+                </div>
+            </div>
+            <div class="admin-actions">
+                <button class="admin-btn sheets-btn" onclick="openGoogleSheet()" id="viewSheetBtn" style="display: none;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                    View Sheet
+                </button>
+                <button class="admin-btn download-btn" onclick="downloadExcel()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Download Excel
+                </button>
+                <button class="admin-btn config-btn" onclick="openConfigModal()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Setup
+                </button>
+                <button class="admin-btn clear-btn" onclick="clearAllData()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <svg class="toast-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <!-- Config Modal -->
+    <div class="modal-overlay" id="configModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Google Sheets Setup</h3>
+                <button class="modal-close" onclick="closeConfigModal()">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="status-indicator">
+                    <span class="status-dot" id="connectionStatus"></span>
+                    <span id="connectionText">Not configured</span>
+                </div>
+                <p>Enter your Google Apps Script Web App URL to enable centralized data collection. All submissions will be saved to your Google Sheet.</p>
+                <input type="url" class="modal-input" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+                <p style="font-size: 0.8rem; color: var(--text-muted);">
+                    📄 See the <code>google-apps-script.js</code> file for setup instructions.
+                </p>
+                <input type="url" class="modal-input" id="sheetUrl" placeholder="Google Sheet URL (optional - for View Sheet button)">
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" onclick="closeConfigModal()">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="saveConfig()">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURATION - Google Sheets Integration
+        // ============================================
+        // Get config from localStorage or use defaults
+        let CONFIG = JSON.parse(localStorage.getItem('smi_config') || '{}');
+        
+        // Projects Master Data
+        const PROJECTS_MASTER = [
+            { id: "Project 01", title: "Shared Fire, Shared Future", disciplines: ["BSSD", "CAC", "CE", "HCD", "IADP", "IAIDP", "PSD", "VCSB", "CAP", "DMA", "FILM"] },
+            { id: "Project 02", title: "Between the Farm and the Forest", disciplines: ["BSSD", "CAC", "CE", "HCD", "IADP", "IAIDP", "VCSB", "FILM"] },
+            { id: "Project 03", title: "Magrathea", disciplines: ["BSSD", "CAC", "CE", "HCD", "IADP", "IAIDP", "PSD", "VCSB", "CAP", "DMA", "FILM"] },
+            { id: "Project 04", title: "Fool's Paradise", disciplines: ["CE", "IADP", "IAIDP", "PSD", "VCSB", "CAP", "DMA", "FILM"] },
+            { id: "Project 05", title: "Braiding", disciplines: ["CE", "HCD", "IADP", "IAIDP", "PSD", "VCSB", "CAP", "DMA", "FILM"] },
+            { id: "Project 06", title: "Fabric of Urban Trees", disciplines: ["HCD", "IADP", "IAIDP", "VCSB", "CAP", "DMA", "FILM"] },
+            { id: "Project 07", title: "City as Text", disciplines: ["BSSD", "CAC", "CE", "HCD", "IADP", "IAIDP", "PSD", "VCSB", "CAP", "DMA", "FILM"] },
+            { id: "Project 08", title: "The Bahurupi", disciplines: ["BSSD", "CE", "IADP", "IAIDP", "PSD", "VCSB", "CAP", "DMA", "FILM"] },
+            { id: "Project 09", title: "The Zen Mela", disciplines: ["BSSD", "CAC", "CE", "HCD", "IADP", "IAIDP", "PSD", "VCSB", "CAP", "DMA", "FILM"] },
+            { id: "Project 10", title: "Rules Without Rulers", disciplines: ["BSSD", "CAC", "CE", "HCD", "IADP", "IAIDP", "PSD", "VCSB", "CAP", "DMA", "FILM"] },
+            { id: "Project 11", title: "Pulse Quest AI", disciplines: ["BSSD", "CAC", "HCD", "IADP", "IAIDP", "VCSB"] },
+            { id: "Project 12", title: "The Music of Life", disciplines: ["BSSD", "CAC", "CE", "HCD", "IADP", "IAIDP", "PSD", "VCSB", "CAP", "DMA"] },
+            { id: "Project 13", title: "A Sense of Loss", disciplines: ["CE", "IAIDP", "VCSB", "CAP", "DMA", "FILM"] },
+            { id: "Project 14", title: "Mountain, Matter and Meaning", disciplines: ["IADP", "VCSB", "CAP"] },
+            { id: "Project 15", title: "LEGO® AT PLAY", disciplines: ["CE", "HCD", "IADP", "IAIDP", "PSD", "VCSB", "DMA"] },
+            { id: "Project 16", title: "Intelligent Mobility on the Ground", disciplines: ["HCD", "IADP"] }
+        ];
+
+        // State
+        let selectedProjects = [];
+        let submissions = JSON.parse(localStorage.getItem('smi_submissions') || '[]');
+
+        // DOM Elements
+        const form = document.getElementById('preferenceForm');
+        const disciplineSelect = document.getElementById('discipline');
+        const projectsContainer = document.getElementById('projectsContainer');
+        const projectsGrid = document.getElementById('projectsGrid');
+        const selectionCount = document.getElementById('selectionCount');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+        const adminToggle = document.getElementById('adminToggle');
+        const adminPanel = document.getElementById('adminPanel');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // Initialize
+        updateAdminStats();
+
+        // Event Listeners
+        disciplineSelect.addEventListener('change', handleDisciplineChange);
+        form.addEventListener('submit', handleSubmit);
+        adminToggle.addEventListener('click', toggleAdminPanel);
+
+        function handleDisciplineChange() {
+            const discipline = disciplineSelect.value;
+            selectedProjects = [];
+            
+            if (!discipline) {
+                projectsContainer.classList.remove('visible');
+                submitBtn.disabled = true;
+                return;
+            }
+
+            // Filter projects for this discipline
+            const eligibleProjects = PROJECTS_MASTER.filter(p => 
+                p.disciplines.includes(discipline)
+            );
+
+            // Render projects
+            projectsGrid.innerHTML = eligibleProjects.map((project, index) => `
+                <div class="project-item" data-id="${project.id}" onclick="toggleProject('${project.id}')" style="animation-delay: ${index * 0.05}s">
+                    <div class="project-checkbox">
+                        <svg fill="none" stroke="white" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <div class="project-details">
+                        <div class="project-id">${project.id}</div>
+                        <div class="project-title">${project.title}</div>
+                    </div>
+                    <span class="selection-badge">Choice</span>
+                </div>
+            `).join('');
+
+            projectsContainer.classList.add('visible');
+            updateSelectionUI();
+        }
+
+        function toggleProject(projectId) {
+            const index = selectedProjects.indexOf(projectId);
+            
+            if (index > -1) {
+                // Remove if already selected
+                selectedProjects.splice(index, 1);
+            } else if (selectedProjects.length < 2) {
+                // Add if under limit
+                selectedProjects.push(projectId);
+            } else {
+                // Show warning if at limit
+                showToast('You can only select 2 projects', 'error');
+                return;
+            }
+
+            updateSelectionUI();
+        }
+
+        function updateSelectionUI() {
+            // Update count
+            selectionCount.textContent = selectedProjects.length;
+            selectionCount.className = 'counter-number';
+            
+            if (selectedProjects.length === 2) {
+                selectionCount.classList.add('success');
+            } else if (selectedProjects.length > 2) {
+                selectionCount.classList.add('warning');
+            }
+
+            // Update project items
+            document.querySelectorAll('.project-item').forEach((item, index) => {
+                const projectId = item.dataset.id;
+                const isSelected = selectedProjects.includes(projectId);
+                const selectionIndex = selectedProjects.indexOf(projectId);
+                
+                item.classList.toggle('selected', isSelected);
+                item.classList.toggle('disabled', !isSelected && selectedProjects.length >= 2);
+                
+                // Update badge text
+                const badge = item.querySelector('.selection-badge');
+                if (isSelected) {
+                    badge.textContent = selectionIndex === 0 ? 'Choice A' : 'Choice B';
+                }
+            });
+
+            // Enable/disable submit
+            submitBtn.disabled = selectedProjects.length !== 2;
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+
+            const studentId = document.getElementById('studentId').value.trim();
+            const studentName = document.getElementById('studentName').value.trim();
+            const discipline = disciplineSelect.value;
+
+            if (!studentId || !studentName || !discipline || selectedProjects.length !== 2) {
+                showToast('Please fill all fields and select 2 projects', 'error');
+                return;
+            }
+
+            // Get project titles
+            const choiceAProject = PROJECTS_MASTER.find(p => p.id === selectedProjects[0]);
+            const choiceBProject = PROJECTS_MASTER.find(p => p.id === selectedProjects[1]);
+
+            const submissionData = {
+                studentId,
+                studentName,
+                discipline,
+                choiceA: selectedProjects[0],
+                choiceATitle: choiceAProject ? choiceAProject.title : '',
+                choiceB: selectedProjects[1],
+                choiceBTitle: choiceBProject ? choiceBProject.title : '',
+                timestamp: new Date().toISOString()
+            };
+
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<span><span class="spinner"></span>Submitting...</span>';
+            submitBtn.disabled = true;
+
+            // Try to submit to Google Sheets first
+            let googleSheetsSuccess = false;
+            if (CONFIG.scriptUrl) {
+                try {
+                    const response = await fetch(CONFIG.scriptUrl, {
+                        method: 'POST',
+                        mode: 'no-cors', // Required for Google Apps Script
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(submissionData)
+                    });
+                    // With no-cors, we can't read the response, but if no error, assume success
+                    googleSheetsSuccess = true;
+                } catch (error) {
+                    console.error('Google Sheets submission failed:', error);
+                }
+            }
+
+            // Always save to localStorage as backup
+            const existingIndex = submissions.findIndex(s => s.studentId === studentId);
+            if (existingIndex > -1) {
+                submissions[existingIndex] = submissionData;
+            } else {
+                submissions.push(submissionData);
+            }
+            localStorage.setItem('smi_submissions', JSON.stringify(submissions));
+            updateAdminStats();
+
+            // Reset button state
+            submitBtn.classList.remove('loading');
+            submitBtn.innerHTML = '<span>Submit Preferences</span>';
+
+            // Show appropriate message
+            if (googleSheetsSuccess) {
+                showToast('Preferences submitted to Google Sheets!', 'success');
+            } else if (CONFIG.scriptUrl) {
+                showToast('Saved locally (Google Sheets unavailable)', 'success');
+            } else {
+                showToast('Preferences saved locally!', 'success');
+            }
+
+            // Show success message
+            form.style.display = 'none';
+            successMessage.classList.add('visible');
+        }
+
+        function resetForm() {
+            form.reset();
+            selectedProjects = [];
+            projectsContainer.classList.remove('visible');
+            submitBtn.disabled = true;
+            form.style.display = 'block';
+            successMessage.classList.remove('visible');
+        }
+
+        function toggleAdminPanel() {
+            adminPanel.classList.toggle('visible');
+        }
+
+        function updateAdminStats() {
+            document.getElementById('totalSubmissions').textContent = submissions.length;
+            const uniqueIds = new Set(submissions.map(s => s.studentId));
+            document.getElementById('uniqueStudents').textContent = uniqueIds.size;
+        }
+
+        function downloadExcel() {
+            if (submissions.length === 0) {
+                showToast('No submissions to download', 'error');
+                return;
+            }
+
+            // Prepare data with project titles
+            const data = submissions.map(s => {
+                const choiceAProject = PROJECTS_MASTER.find(p => p.id === s.choiceA);
+                const choiceBProject = PROJECTS_MASTER.find(p => p.id === s.choiceB);
+                
+                return {
+                    'Student ID': s.studentId,
+                    'Student Name': s.studentName,
+                    'Discipline': s.discipline,
+                    'Choice A (ID)': s.choiceA,
+                    'Choice A (Title)': choiceAProject ? choiceAProject.title : '',
+                    'Choice B (ID)': s.choiceB,
+                    'Choice B (Title)': choiceBProject ? choiceBProject.title : '',
+                    'Submission Time': new Date(s.timestamp).toLocaleString()
+                };
+            });
+
+            // Create workbook
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Student_Preferences');
+
+            // Also add Projects Master sheet
+            const projectsData = PROJECTS_MASTER.map(p => ({
+                'Project ID': p.id,
+                'Project Title': p.title,
+                'Allowed Disciplines': p.disciplines.join(', ')
+            }));
+            const ws2 = XLSX.utils.json_to_sheet(projectsData);
+            XLSX.utils.book_append_sheet(wb, ws2, 'Projects_Master');
+
+            // Download
+            const date = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `SMI_Project_Preferences_${date}.xlsx`);
+            
+            showToast('Excel file downloaded!', 'success');
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all submissions? This cannot be undone.')) {
+                submissions = [];
+                localStorage.removeItem('smi_submissions');
+                updateAdminStats();
+                showToast('All data cleared', 'success');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            toast.className = `toast ${type}`;
+            
+            // Update icon
+            const icon = toast.querySelector('.toast-icon');
+            if (type === 'success') {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+            }
+
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 3000);
+        }
+
+        // ============================================
+        // Google Sheets Configuration
+        // ============================================
+        
+        function openConfigModal() {
+            const modal = document.getElementById('configModal');
+            const scriptUrlInput = document.getElementById('scriptUrl');
+            const sheetUrlInput = document.getElementById('sheetUrl');
+            
+            // Load existing config
+            scriptUrlInput.value = CONFIG.scriptUrl || '';
+            sheetUrlInput.value = CONFIG.sheetUrl || '';
+            
+            updateConnectionStatus();
+            modal.classList.add('visible');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('configModal').classList.remove('visible');
+        }
+
+        function updateConnectionStatus() {
+            const statusDot = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('connectionText');
+            const viewSheetBtn = document.getElementById('viewSheetBtn');
+            
+            if (CONFIG.scriptUrl) {
+                statusDot.className = 'status-dot connected';
+                statusText.textContent = 'Connected to Google Sheets';
+                if (CONFIG.sheetUrl) {
+                    viewSheetBtn.style.display = 'flex';
+                }
+            } else {
+                statusDot.className = 'status-dot disconnected';
+                statusText.textContent = 'Not configured (saving locally only)';
+                viewSheetBtn.style.display = 'none';
+            }
+        }
+
+        function saveConfig() {
+            const scriptUrl = document.getElementById('scriptUrl').value.trim();
+            const sheetUrl = document.getElementById('sheetUrl').value.trim();
+            
+            CONFIG = { scriptUrl, sheetUrl };
+            localStorage.setItem('smi_config', JSON.stringify(CONFIG));
+            
+            updateConnectionStatus();
+            closeConfigModal();
+            
+            if (scriptUrl) {
+                showToast('Google Sheets connected!', 'success');
+            } else {
+                showToast('Configuration saved (local only)', 'success');
+            }
+        }
+
+        function openGoogleSheet() {
+            if (CONFIG.sheetUrl) {
+                window.open(CONFIG.sheetUrl, '_blank');
+            } else {
+                showToast('Sheet URL not configured', 'error');
+            }
+        }
+
+        // Initialize connection status on page load
+        updateConnectionStatus();
+
+        // Close modal on outside click
+        document.getElementById('configModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConfigModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeConfigModal();
+            }
+        });
+
+        // ============================================
+        // Admin Access Control (Hidden from students)
+        // ============================================
+        
+        // Check for admin access via URL parameter or stored session
+        function checkAdminAccess() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isAdmin = urlParams.get('admin') === 'true' || 
+                           sessionStorage.getItem('smi_admin') === 'true';
+            
+            if (isAdmin) {
+                enableAdminMode();
+            }
+        }
+
+        function enableAdminMode() {
+            sessionStorage.setItem('smi_admin', 'true');
+            document.getElementById('adminToggle').classList.add('visible');
+        }
+
+        // Secret keyboard shortcut: Ctrl+Shift+A (or Cmd+Shift+A on Mac)
+        let secretKeys = [];
+        document.addEventListener('keydown', function(e) {
+            // Track key sequence for secret code: type "admin" to unlock
+            secretKeys.push(e.key.toLowerCase());
+            if (secretKeys.length > 10) secretKeys.shift();
+            
+            // Check if "admin" was typed
+            if (secretKeys.join('').includes('admin')) {
+                enableAdminMode();
+                showToast('Admin mode enabled', 'success');
+                secretKeys = [];
+            }
+            
+            // Alternative: Ctrl/Cmd + Shift + A
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                enableAdminMode();
+                showToast('Admin mode enabled', 'success');
+            }
+        });
+
+        // Check admin access on page load
+        checkAdminAccess();
+    </script>
+</body>
+</html>
