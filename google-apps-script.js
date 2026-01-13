@@ -6,7 +6,7 @@
  * 1. Go to Google Sheets (sheets.google.com) and create a new spreadsheet
  * 2. Name it "SMI Project Preferences 2026"
  * 3. In the first row, add these headers:
- *    Timestamp | Student_ID | Student_Name | Discipline | Choice_A | Choice_A_Title | Choice_B | Choice_B_Title
+ *    Timestamp | MAHE_Roll_No | Name | MAHE_Email | Discipline | Choice_A | Choice_A_Title | Choice_B | Choice_B_Title
  * 
  * 4. Go to Extensions → Apps Script
  * 5. Delete any code in the editor and paste this entire file
@@ -50,6 +50,7 @@ function doPost(e) {
       timestamp,
       data.studentId,
       data.studentName,
+      data.studentEmail,
       data.discipline,
       data.choiceA,
       data.choiceATitle,
@@ -105,11 +106,12 @@ function getAllSubmissions() {
     timestamp: row[0],
     studentId: row[1],
     studentName: row[2],
-    discipline: row[3],
-    choiceA: row[4],
-    choiceATitle: row[5],
-    choiceB: row[6],
-    choiceBTitle: row[7]
+    studentEmail: row[3],
+    discipline: row[4],
+    choiceA: row[5],
+    choiceATitle: row[6],
+    choiceB: row[7],
+    choiceBTitle: row[8]
   }));
   
   return submissions;

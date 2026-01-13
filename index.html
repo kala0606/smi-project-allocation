@@ -891,13 +891,18 @@
                     <h2 class="section-title">Student Information</h2>
                     
                     <div class="form-group">
-                        <label for="studentId">Student ID *</label>
-                        <input type="text" id="studentId" name="studentId" placeholder="e.g., SMI24001" required>
+                        <label for="studentId">MAHE Roll No *</label>
+                        <input type="text" id="studentId" name="studentId" placeholder="e.g., 210953001" required>
                     </div>
 
                     <div class="form-group">
                         <label for="studentName">Full Name *</label>
                         <input type="text" id="studentName" name="studentName" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="studentEmail">MAHE Email *</label>
+                        <input type="email" id="studentEmail" name="studentEmail" placeholder="yourname@learner.manipal.edu" required>
                     </div>
 
                     <div class="form-group">
@@ -1189,9 +1194,10 @@
 
             const studentId = document.getElementById('studentId').value.trim();
             const studentName = document.getElementById('studentName').value.trim();
+            const studentEmail = document.getElementById('studentEmail').value.trim();
             const discipline = disciplineSelect.value;
 
-            if (!studentId || !studentName || !discipline || selectedProjects.length !== 2) {
+            if (!studentId || !studentName || !studentEmail || !discipline || selectedProjects.length !== 2) {
                 showToast('Please fill all fields and select 2 projects', 'error');
                 return;
             }
@@ -1203,6 +1209,7 @@
             const submissionData = {
                 studentId,
                 studentName,
+                studentEmail,
                 discipline,
                 choiceA: selectedProjects[0],
                 choiceATitle: choiceAProject ? choiceAProject.title : '',
@@ -1288,6 +1295,7 @@
                 // Pre-fill the form with last submission data
                 document.getElementById('studentId').value = lastSubmission.studentId;
                 document.getElementById('studentName').value = lastSubmission.studentName;
+                document.getElementById('studentEmail').value = lastSubmission.studentEmail || '';
                 disciplineSelect.value = lastSubmission.discipline;
                 
                 // Trigger discipline change to show projects
@@ -1323,8 +1331,9 @@
                 const choiceBProject = PROJECTS_MASTER.find(p => p.id === s.choiceB);
                 
                 return {
-                    'Student ID': s.studentId,
-                    'Student Name': s.studentName,
+                    'MAHE Roll No': s.studentId,
+                    'Name': s.studentName,
+                    'MAHE Email': s.studentEmail || '',
                     'Discipline': s.discipline,
                     'Choice A (ID)': s.choiceA,
                     'Choice A (Title)': choiceAProject ? choiceAProject.title : '',
