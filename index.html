@@ -1041,13 +1041,17 @@
                 </div>
                 <p>Enter your Google Apps Script Web App URL to enable centralized data collection. All submissions will be saved to your Google Sheet.</p>
                 <input type="url" class="modal-input" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
-                <p style="font-size: 0.8rem; color: var(--text-muted);">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
                     📄 See the <code>google-apps-script.js</code> file for setup instructions.
                 </p>
                 <input type="url" class="modal-input" id="sheetUrl" placeholder="Google Sheet URL (optional - for View Sheet button)">
+                <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-input); border-radius: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+                    <strong style="color: var(--accent-primary);">⚠️ Important:</strong> Make sure your Google Apps Script is deployed with "Anyone" access, or submissions won't work!
+                </div>
             </div>
             <div class="modal-actions">
                 <button class="modal-btn modal-btn-secondary" onclick="closeConfigModal()">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="testConnection()" style="background: var(--text-secondary);">Test Connection</button>
                 <button class="modal-btn modal-btn-primary" onclick="saveConfig()">Save Configuration</button>
             </div>
         </div>
@@ -1227,19 +1231,38 @@
             let googleSheetsSuccess = false;
             if (CONFIG.scriptUrl) {
                 try {
+                    // Use form submission method for better compatibility with Google Apps Script
+                    const formData = new FormData();
+                    formData.append('data', JSON.stringify(submissionData));
+                    
                     const response = await fetch(CONFIG.scriptUrl, {
                         method: 'POST',
-                        mode: 'no-cors', // Required for Google Apps Script
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(submissionData)
+                        mode: 'no-cors',
+                        body: formData
                     });
-                    // With no-cors, we can't read the response, but if no error, assume success
+                    
+                    // Also try direct JSON POST as fallback
+                    try {
+                        await fetch(CONFIG.scriptUrl, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(submissionData)
+                        });
+                    } catch (e) {
+                        console.log('JSON method failed, form method used');
+                    }
+                    
                     googleSheetsSuccess = true;
+                    console.log('Submitted to Google Sheets:', submissionData);
                 } catch (error) {
                     console.error('Google Sheets submission failed:', error);
+                    googleSheetsSuccess = false;
                 }
+            } else {
+                console.warn('Google Sheets not configured! Data saved locally only.');
             }
 
             // Always save to localStorage as backup
@@ -1428,9 +1451,35 @@
             }
         }
 
+        async function testConnection() {
+            const scriptUrl = document.getElementById('scriptUrl').value.trim();
+            
+            if (!scriptUrl) {
+                showToast('Please enter a Google Apps Script URL first', 'error');
+                return;
+            }
+            
+            // Test with a simple GET request
+            try {
+                const response = await fetch(scriptUrl + '?test=true', {
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+                showToast('Connection test sent! Check your Google Sheet for a test entry.', 'success');
+            } catch (error) {
+                showToast('Connection test failed. Check the URL and deployment settings.', 'error');
+                console.error('Connection test error:', error);
+            }
+        }
+
         function saveConfig() {
             const scriptUrl = document.getElementById('scriptUrl').value.trim();
             const sheetUrl = document.getElementById('sheetUrl').value.trim();
+            
+            if (scriptUrl && !scriptUrl.includes('script.google.com')) {
+                showToast('Invalid Google Apps Script URL', 'error');
+                return;
+            }
             
             CONFIG = { scriptUrl, sheetUrl };
             localStorage.setItem('smi_config', JSON.stringify(CONFIG));
@@ -1439,7 +1488,7 @@
             closeConfigModal();
             
             if (scriptUrl) {
-                showToast('Google Sheets connected!', 'success');
+                showToast('Google Sheets connected! Test with a submission.', 'success');
             } else {
                 showToast('Configuration saved (local only)', 'success');
             }
