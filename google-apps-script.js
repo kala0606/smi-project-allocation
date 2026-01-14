@@ -29,27 +29,27 @@ function doPost(e) {
     // Get the active spreadsheet
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     
-    // Parse the incoming data - handle both JSON and form data
+    // Parse the incoming data
     let data;
     if (e.postData && e.postData.contents) {
-      // Try to parse as JSON first
+      // JSON POST request
       try {
         data = JSON.parse(e.postData.contents);
-      } catch (e) {
-        // If JSON fails, try form data
-        const formData = e.parameter;
-        if (formData && formData.data) {
-          data = JSON.parse(formData.data);
-        } else {
-          throw new Error('Invalid data format');
-        }
+      } catch (parseError) {
+        Logger.log('JSON parse error: ' + parseError);
+        throw new Error('Failed to parse JSON: ' + parseError);
       }
     } else if (e.parameter && e.parameter.data) {
-      // Handle form data
+      // Form data
       data = JSON.parse(e.parameter.data);
     } else {
+      Logger.log('No data received. e.postData: ' + JSON.stringify(e.postData));
+      Logger.log('e.parameter: ' + JSON.stringify(e.parameter));
       throw new Error('No data received');
     }
+    
+    // Log received data for debugging
+    Logger.log('Received data: ' + JSON.stringify(data));
     
     // Create a timestamp
     const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
@@ -95,11 +95,16 @@ function doPost(e) {
       .setMimeType(ContentService.MimeType.JSON);
       
   } catch (error) {
+    // Log error for debugging
+    Logger.log('Error in doPost: ' + error.toString());
+    Logger.log('Error stack: ' + error.stack);
+    
     // Return error response
     return ContentService
       .createTextOutput(JSON.stringify({ 
         success: false, 
-        message: 'Error: ' + error.toString() 
+        message: 'Error: ' + error.toString(),
+        error: error.toString()
       }))
       .setMimeType(ContentService.MimeType.JSON);
   }

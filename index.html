@@ -1039,14 +1039,12 @@
                     <span class="status-dot" id="connectionStatus"></span>
                     <span id="connectionText">Not configured</span>
                 </div>
-                <p>Enter your Google Apps Script Web App URL to enable centralized data collection. All submissions will be saved to your Google Sheet.</p>
-                <input type="url" class="modal-input" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
-                    📄 See the <code>google-apps-script.js</code> file for setup instructions.
-                </p>
+                <p style="margin-bottom: 1rem;"><strong>Note:</strong> The Google Sheets URL is hardcoded in the form code. This setup is only for testing/override.</p>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">To change the URL permanently, edit <code>DEFAULT_SCRIPT_URL</code> in index.html (line ~1066)</p>
+                <input type="url" class="modal-input" id="scriptUrl" placeholder="Override Google Apps Script URL (optional)">
                 <input type="url" class="modal-input" id="sheetUrl" placeholder="Google Sheet URL (optional - for View Sheet button)">
                 <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-input); border-radius: 8px; font-size: 0.85rem; color: var(--text-secondary);">
-                    <strong style="color: var(--accent-primary);">⚠️ Important:</strong> Make sure your Google Apps Script is deployed with "Anyone" access, or submissions won't work!
+                    <strong style="color: var(--accent-primary);">🔍 Debugging:</strong> If submissions aren't working, check Google Apps Script → View → Executions for error logs.
                 </div>
             </div>
             <div class="modal-actions">
@@ -1240,38 +1238,28 @@
             let googleSheetsSuccess = false;
             if (CONFIG.scriptUrl) {
                 try {
-                    // Use form submission method for better compatibility with Google Apps Script
-                    const formData = new FormData();
-                    formData.append('data', JSON.stringify(submissionData));
-                    
+                    // Use fetch with proper error handling
+                    // Google Apps Script accepts POST with JSON
                     const response = await fetch(CONFIG.scriptUrl, {
                         method: 'POST',
-                        mode: 'no-cors',
-                        body: formData
+                        mode: 'no-cors', // Required for cross-origin
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(submissionData)
                     });
                     
-                    // Also try direct JSON POST as fallback
-                    try {
-                        await fetch(CONFIG.scriptUrl, {
-                            method: 'POST',
-                            mode: 'no-cors',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(submissionData)
-                        });
-                    } catch (e) {
-                        console.log('JSON method failed, form method used');
-                    }
-                    
+                    // With no-cors, we can't read response, but if no exception, assume success
                     googleSheetsSuccess = true;
-                    console.log('Submitted to Google Sheets:', submissionData);
+                    console.log('✅ Submitted to Google Sheets:', submissionData);
+                    console.log('📊 Check your sheet:', CONFIG.sheetUrl || 'Google Sheet');
                 } catch (error) {
-                    console.error('Google Sheets submission failed:', error);
+                    console.error('❌ Google Sheets submission error:', error);
                     googleSheetsSuccess = false;
+                    // Still try to save locally
                 }
             } else {
-                console.warn('Google Sheets not configured! Data saved locally only.');
+                console.warn('⚠️ Google Sheets not configured! Data saved locally only.');
             }
 
             // Always save to localStorage as backup
