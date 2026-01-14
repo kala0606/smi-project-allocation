@@ -1067,9 +1067,15 @@
         // Get config from localStorage or use defaults
         let savedConfig = JSON.parse(localStorage.getItem('smi_config') || '{}');
         let CONFIG = {
-            scriptUrl: savedConfig.scriptUrl || DEFAULT_SCRIPT_URL,
-            sheetUrl: savedConfig.sheetUrl || DEFAULT_SHEET_URL
+            scriptUrl: (savedConfig.scriptUrl && savedConfig.scriptUrl.trim()) || DEFAULT_SCRIPT_URL,
+            sheetUrl: (savedConfig.sheetUrl && savedConfig.sheetUrl.trim()) || DEFAULT_SHEET_URL
         };
+        
+        // Log config for debugging
+        console.log('📋 CONFIG loaded:', {
+            scriptUrl: CONFIG.scriptUrl ? '✅ Set' : '❌ Not set',
+            sheetUrl: CONFIG.sheetUrl ? '✅ Set' : '❌ Not set'
+        });
         
         // Projects Master Data
         const PROJECTS_MASTER = [
@@ -1236,8 +1242,11 @@
 
             // Try to submit to Google Sheets first
             let googleSheetsSuccess = false;
-            if (CONFIG.scriptUrl) {
+            console.log('🔍 Checking CONFIG.scriptUrl:', CONFIG.scriptUrl);
+            
+            if (CONFIG.scriptUrl && CONFIG.scriptUrl.trim()) {
                 try {
+                    console.log('📤 Attempting to submit to:', CONFIG.scriptUrl);
                     // Use fetch with proper error handling
                     // Google Apps Script accepts POST with JSON
                     const response = await fetch(CONFIG.scriptUrl, {
@@ -1259,7 +1268,10 @@
                     // Still try to save locally
                 }
             } else {
-                console.warn('⚠️ Google Sheets not configured! Data saved locally only.');
+                console.warn('⚠️ Google Sheets not configured!');
+                console.warn('   DEFAULT_SCRIPT_URL:', DEFAULT_SCRIPT_URL);
+                console.warn('   CONFIG.scriptUrl:', CONFIG.scriptUrl);
+                console.warn('   Data saved locally only.');
             }
 
             // Always save to localStorage as backup
@@ -1539,6 +1551,9 @@
         // Secret keyboard shortcut: Ctrl+Shift+A (or Cmd+Shift+A on Mac)
         let secretKeys = [];
         document.addEventListener('keydown', function(e) {
+            // Check if e.key exists (some keys don't have it)
+            if (!e.key) return;
+            
             // Track key sequence for secret code: type "admin" to unlock
             secretKeys.push(e.key.toLowerCase());
             if (secretKeys.length > 10) secretKeys.shift();
@@ -1551,7 +1566,7 @@
             }
             
             // Alternative: Ctrl/Cmd + Shift + A
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'a') {
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key && e.key.toLowerCase() === 'a') {
                 e.preventDefault();
                 enableAdminMode();
                 showToast('Admin mode enabled', 'success');
