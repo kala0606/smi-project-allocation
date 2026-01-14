@@ -43,8 +43,27 @@ A beautiful, interactive form for students to submit their project preferences f
    - Click **Deploy**
    - **Authorize** when prompted (click through any warnings)
    - **Copy the Web App URL** (looks like `https://script.google.com/macros/s/XXXX.../exec`)
+   - **IMPORTANT:** Save this URL - you'll need it in the next step!
 
-### Step 2: Deploy the Form on GitHub Pages
+### Step 2: Configure the Form with Your Google Sheets URL
+
+**⚠️ CRITICAL:** You MUST hardcode your Google Apps Script URL in the form code, or it won't work on students' phones!
+
+1. **Open `index.html` in a text editor**
+2. **Find this section** (around line 1066):
+   ```javascript
+   const DEFAULT_SCRIPT_URL = ''; // <-- PASTE YOUR URL HERE
+   ```
+3. **Paste your Google Apps Script Web App URL** between the quotes:
+   ```javascript
+   const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_ID_HERE/exec';
+   ```
+4. **Also update the headers in your Google Sheet** to match:
+   ```
+   Timestamp | MAHE_Roll_No | Name | MAHE_Email | Discipline | Choice_A | Choice_A_Title | Choice_B | Choice_B_Title
+   ```
+
+### Step 3: Deploy the Form on GitHub Pages
 
 1. **Create a new repository** on GitHub
    - Go to [github.com/new](https://github.com/new)
@@ -68,14 +87,9 @@ A beautiful, interactive form for students to submit their project preferences f
    https://yourusername.github.io/smi-project-allocation/
    ```
 
-### Step 3: Configure the Form
+**✅ That's it!** The form is now configured and will automatically save all submissions to your Google Sheet.
 
-1. Open your deployed form URL
-2. Click the **gear icon (⚙️)** in the bottom right corner
-3. Click **Setup**
-4. Paste your **Google Apps Script Web App URL**
-5. Paste your **Google Sheet URL** (for the "View Sheet" button)
-6. Click **Save Configuration**
+**Note:** The Setup button (gear icon) is optional - it only overrides the hardcoded URL for testing. The hardcoded URL in the code is what students will use.
 
 ---
 

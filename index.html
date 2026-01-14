@@ -1061,8 +1061,17 @@
         // ============================================
         // CONFIGURATION - Google Sheets Integration
         // ============================================
+        // IMPORTANT: Replace this with your Google Apps Script Web App URL
+        // Get it from: Google Sheet → Extensions → Apps Script → Deploy → Web app
+        const DEFAULT_SCRIPT_URL = ''; // <-- PASTE YOUR URL HERE (e.g., 'https://script.google.com/macros/s/XXXX.../exec')
+        const DEFAULT_SHEET_URL = ''; // <-- PASTE YOUR GOOGLE SHEET URL HERE (optional)
+        
         // Get config from localStorage or use defaults
-        let CONFIG = JSON.parse(localStorage.getItem('smi_config') || '{}');
+        let savedConfig = JSON.parse(localStorage.getItem('smi_config') || '{}');
+        let CONFIG = {
+            scriptUrl: savedConfig.scriptUrl || DEFAULT_SCRIPT_URL,
+            sheetUrl: savedConfig.sheetUrl || DEFAULT_SHEET_URL
+        };
         
         // Projects Master Data
         const PROJECTS_MASTER = [
@@ -1563,6 +1572,15 @@
 
         // Check admin access on page load
         checkAdminAccess();
+        
+        // Warn admin if Google Sheets not configured
+        if (sessionStorage.getItem('smi_admin') === 'true' || new URLSearchParams(window.location.search).get('admin') === 'true') {
+            if (!CONFIG.scriptUrl) {
+                console.warn('⚠️ GOOGLE SHEETS NOT CONFIGURED!');
+                console.warn('Edit index.html and set DEFAULT_SCRIPT_URL to your Google Apps Script Web App URL');
+                console.warn('Or use the Setup button (gear icon) to configure it');
+            }
+        }
     </script>
 </body>
 </html>
