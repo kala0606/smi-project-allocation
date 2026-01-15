@@ -1097,6 +1097,20 @@
             { id: "Project 16", title: "Intelligent Mobility on the Ground", disciplines: ["HCD", "IADP"] }
         ];
 
+        // ============================================
+        // Dashboard Secret Link Check
+        // ============================================
+        // Check for secret dashboard parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const dashboardSecret = urlParams.get('dashboard');
+        // Change this secret key to your preferred value
+        const DASHBOARD_SECRET = 'smi2026alloc';
+        
+        if (dashboardSecret === DASHBOARD_SECRET) {
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+        }
+
         // State
         let selectedProjects = [];
         let submissions = JSON.parse(localStorage.getItem('smi_submissions') || '[]');

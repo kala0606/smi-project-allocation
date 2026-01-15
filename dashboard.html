@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMI Project Allocation Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: white;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .controls input,
+        .controls select {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .controls input:focus,
+        .controls select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .controls label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        th:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        th.sortable::after {
+            content: ' ↕';
+            opacity: 0.5;
+            font-size: 0.8em;
+        }
+
+        th.sort-asc::after {
+            content: ' ↑';
+            opacity: 1;
+        }
+
+        th.sort-desc::after {
+            content: ' ↓';
+            opacity: 1;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr.unallocated {
+            background-color: #fff3cd;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-primary {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .projects-section {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .project-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .project-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .project-meta span {
+            color: #666;
+        }
+
+        .discipline-list {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .discipline-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 SMI Project Allocation Dashboard</h1>
+            <p>2026 Semester 8 - Allocation Results & Statistics</p>
+        </header>
+
+        <div id="loading" class="loading">Loading data...</div>
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="dashboard" style="display: none;">
+            <div class="stats-grid" id="statsGrid"></div>
+
+            <div class="projects-section" style="padding-top: 0;">
+                <h2 style="margin-bottom: 20px; color: #495057; padding: 0 30px;">🔥 Most Popular Projects (Before Allocation)</h2>
+                <div id="popularitySection" style="padding: 0 30px 30px 30px;"></div>
+            </div>
+
+            <div class="controls">
+                <div>
+                    <label>Search: </label>
+                    <input type="text" id="searchInput" placeholder="Search students, projects, disciplines...">
+                </div>
+                <div>
+                    <label>Filter by Discipline: </label>
+                    <select id="disciplineFilter">
+                        <option value="">All Disciplines</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Filter by Project: </label>
+                    <select id="projectFilter">
+                        <option value="">All Projects</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Filter by Status: </label>
+                    <select id="statusFilter">
+                        <option value="">All</option>
+                        <option value="allocated">Allocated</option>
+                        <option value="unallocated">Unallocated</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="Student_ID">Student ID</th>
+                            <th class="sortable" data-sort="Student_Name">Name</th>
+                            <th class="sortable" data-sort="Discipline">Discipline</th>
+                            <th class="sortable" data-sort="Choice_A">Choice A</th>
+                            <th class="sortable" data-sort="Choice_B">Choice B</th>
+                            <th class="sortable" data-sort="Assigned_Project">Assigned Project</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="projects-section">
+                <h2 style="margin-bottom: 20px; color: #495057;">📊 Project Details</h2>
+                <div class="projects-grid" id="projectsGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allData = [];
+        let stats = {};
+        let currentSort = { column: null, direction: 'asc' };
+
+        // Try multiple paths for JSON files (for GitHub Pages compatibility)
+        async function fetchJSON(path) {
+            const paths = [
+                path,  // Same directory
+                '../' + path,  // Parent directory
+                '../../' + path  // Root directory
+            ];
+            
+            for (const tryPath of paths) {
+                try {
+                    const response = await fetch(tryPath);
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (e) {
+                    // Continue to next path
+                }
+            }
+            throw new Error('Could not find JSON file in any expected location');
+        }
+
+        // Load data
+        async function loadData() {
+            try {
+                allData = await fetchJSON('allocation_data.json');
+                stats = await fetchJSON('allocation_stats.json');
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+
+                renderStats();
+                renderPopularity();
+                populateFilters();
+                renderTable();
+                renderProjects();
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Error loading data: ' + error.message + 
+                    '<br><br>Make sure allocation_data.json and allocation_stats.json are in the same directory or parent directory.';
+            }
+        }
+
+        function renderStats() {
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Total Students</div>
+                    <div class="stat-value">${stats.total_students}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Allocated</div>
+                    <div class="stat-value" style="color: #28a745;">${stats.allocated}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Unallocated</div>
+                    <div class="stat-value" style="color: #dc3545;">${stats.unallocated}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">First Choice</div>
+                    <div class="stat-value" style="color: #17a2b8;">${stats.first_choice_satisfied}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Second Choice</div>
+                    <div class="stat-value" style="color: #ffc107;">${stats.second_choice_satisfied}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Success Rate</div>
+                    <div class="stat-value" style="color: #667eea;">
+                        ${((stats.allocated / stats.total_students) * 100).toFixed(1)}%
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPopularity() {
+            const popularitySection = document.getElementById('popularitySection');
+            if (!stats.projects) return;
+
+            // Get all projects with popularity data and sort by total popularity
+            const projectsList = Object.entries(stats.projects)
+                .map(([id, project]) => ({
+                    id,
+                    ...project,
+                    popularity: project.popularity || {choice_a: 0, choice_b: 0, total: 0}
+                }))
+                .sort((a, b) => b.popularity.total - a.popularity.total)
+                .slice(0, 10); // Top 10 most popular
+
+            if (projectsList.length === 0) return;
+
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.background = 'white';
+            table.style.borderRadius = '12px';
+            table.style.overflow = 'hidden';
+            table.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+            
+            table.innerHTML = `
+                <thead>
+                    <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <th style="padding: 15px; text-align: left;">Rank</th>
+                        <th style="padding: 15px; text-align: left;">Project</th>
+                        <th style="padding: 15px; text-align: center;">Choice A</th>
+                        <th style="padding: 15px; text-align: center;">Choice B</th>
+                        <th style="padding: 15px; text-align: center;">Total Demand</th>
+                        <th style="padding: 15px; text-align: center;">Capacity</th>
+                        <th style="padding: 15px; text-align: center;">Demand/Capacity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${projectsList.map((project, idx) => {
+                        const demandRatio = project.capacity > 0 ? (project.popularity.total / project.capacity).toFixed(1) : '0';
+                        const demandColor = project.popularity.total > project.capacity ? '#dc3545' : 
+                                          project.popularity.total > project.capacity * 0.8 ? '#ffc107' : '#28a745';
+                        return `
+                            <tr style="border-bottom: 1px solid #e9ecef;">
+                                <td style="padding: 12px 15px; font-weight: 600; color: #667eea;">#${idx + 1}</td>
+                                <td style="padding: 12px 15px;">
+                                    <strong>${project.id}</strong><br>
+                                    <small style="color: #666;">${project.title}</small>
+                                </td>
+                                <td style="padding: 12px 15px; text-align: center; color: #17a2b8; font-weight: 600;">${project.popularity.choice_a}</td>
+                                <td style="padding: 12px 15px; text-align: center; color: #ffc107; font-weight: 600;">${project.popularity.choice_b}</td>
+                                <td style="padding: 12px 15px; text-align: center; font-weight: 600; color: #495057;">${project.popularity.total}</td>
+                                <td style="padding: 12px 15px; text-align: center; color: #666;">${project.capacity}</td>
+                                <td style="padding: 12px 15px; text-align: center; font-weight: 600; color: ${demandColor};">${demandRatio}x</td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+            
+            popularitySection.innerHTML = '';
+            popularitySection.appendChild(table);
+        }
+
+        function populateFilters() {
+            const disciplines = [...new Set(allData.map(d => d.Discipline).filter(Boolean))].sort();
+            const projects = [...new Set(allData.map(d => d.Assigned_Project).filter(Boolean))].sort();
+
+            const disciplineFilter = document.getElementById('disciplineFilter');
+            disciplines.forEach(d => {
+                const option = document.createElement('option');
+                option.value = d;
+                option.textContent = d;
+                disciplineFilter.appendChild(option);
+            });
+
+            const projectFilter = document.getElementById('projectFilter');
+            projects.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p;
+                option.textContent = p;
+                projectFilter.appendChild(option);
+            });
+        }
+
+        function renderTable(data = allData) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                if (!row.Assigned_Project) {
+                    tr.classList.add('unallocated');
+                }
+
+                const isFirstChoice = row.Assigned_Project === row.Choice_A;
+                const isSecondChoice = row.Assigned_Project === row.Choice_B;
+                let statusBadge = '';
+
+                if (!row.Assigned_Project) {
+                    statusBadge = '<span class="badge badge-warning">Unallocated</span>';
+                } else if (isFirstChoice) {
+                    statusBadge = '<span class="badge badge-success">First Choice ✓</span>';
+                } else if (isSecondChoice) {
+                    statusBadge = '<span class="badge badge-primary">Second Choice ✓</span>';
+                } else {
+                    statusBadge = '<span class="badge badge-warning">Not in Preferences</span>';
+                }
+
+                tr.innerHTML = `
+                    <td>${row.Student_ID || ''}</td>
+                    <td>${row.Student_Name || ''}</td>
+                    <td>${row.Discipline || ''}</td>
+                    <td>${row.Choice_A || ''}<br><small style="color: #666;">${row.Choice_A_Title || ''}</small></td>
+                    <td>${row.Choice_B || ''}<br><small style="color: #666;">${row.Choice_B_Title || ''}</small></td>
+                    <td>${row.Assigned_Project || '—'}<br><small style="color: #666;">${row.Assigned_Project_Title || ''}</small></td>
+                    <td>${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderProjects() {
+            const projectsGrid = document.getElementById('projectsGrid');
+            projectsGrid.innerHTML = '';
+
+            Object.entries(stats.projects || {}).forEach(([projectId, project]) => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+
+                const disciplineItems = Object.entries(project.disciplines || {})
+                    .map(([disc, count]) => `
+                        <div class="discipline-item">
+                            <span>${disc}</span>
+                            <span><strong>${count}</strong></span>
+                        </div>
+                    `).join('');
+
+                const popularity = project.popularity || {choice_a: 0, choice_b: 0, total: 0};
+                const demandRatio = project.capacity > 0 ? (popularity.total / project.capacity).toFixed(1) : 0;
+                const demandColor = popularity.total > project.capacity ? '#dc3545' : popularity.total > project.capacity * 0.8 ? '#ffc107' : '#28a745';
+                
+                card.innerHTML = `
+                    <h3>${projectId}</h3>
+                    <div style="color: #666; margin-bottom: 10px; font-size: 0.9em;">${project.title}</div>
+                    
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                        <div style="font-weight: 600; color: #495057; margin-bottom: 8px; font-size: 0.9em;">📊 Popularity (Before Allocation)</div>
+                        <div class="project-meta" style="margin: 5px 0;">
+                            <span>Choice A: <strong style="color: #17a2b8;">${popularity.choice_a}</strong></span>
+                            <span>Choice B: <strong style="color: #ffc107;">${popularity.choice_b}</strong></span>
+                        </div>
+                        <div class="project-meta" style="margin-top: 8px;">
+                            <span>Total Demand: <strong style="color: ${demandColor};">${popularity.total}</strong></span>
+                            <span>Demand/Capacity: <strong style="color: ${demandColor};">${demandRatio}x</strong></span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-meta">
+                        <span>Allocated: <strong>${project.allocated}</strong> / ${project.capacity}</span>
+                        <span>${project.utilization}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${project.utilization}%"></div>
+                    </div>
+                    <div class="project-meta" style="margin-top: 10px;">
+                        <span>Disciplines: <strong>${project.discipline_count}</strong></span>
+                        <span>Diversity: <strong>${project.diversity_score}</strong></span>
+                    </div>
+                    <div class="discipline-list">
+                        <strong style="font-size: 0.9em;">Discipline Distribution:</strong>
+                        ${disciplineItems || '<div style="color: #999; font-size: 0.85em; margin-top: 5px;">No students allocated</div>'}
+                    </div>
+                `;
+                projectsGrid.appendChild(card);
+            });
+        }
+
+        function filterData() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const discipline = document.getElementById('disciplineFilter').value;
+            const project = document.getElementById('projectFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            let filtered = allData.filter(row => {
+                const matchesSearch = !search || 
+                    Object.values(row).some(val => 
+                        String(val).toLowerCase().includes(search)
+                    );
+                const matchesDiscipline = !discipline || row.Discipline === discipline;
+                const matchesProject = !project || row.Assigned_Project === project;
+                const matchesStatus = !status || 
+                    (status === 'allocated' && row.Assigned_Project) ||
+                    (status === 'unallocated' && !row.Assigned_Project);
+
+                return matchesSearch && matchesDiscipline && matchesProject && matchesStatus;
+            });
+
+            renderTable(filtered);
+        }
+
+        function sortTable(column) {
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+
+            // Update header classes
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (th.dataset.sort === column) {
+                    th.classList.add(`sort-${currentSort.direction}`);
+                }
+            });
+
+            // Sort data
+            const filtered = Array.from(document.getElementById('tableBody').children).map(tr => {
+                const index = Array.from(tr.parentNode.children).indexOf(tr);
+                return allData[index];
+            });
+
+            filtered.sort((a, b) => {
+                let aVal = a[column] || '';
+                let bVal = b[column] || '';
+                
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (currentSort.direction === 'asc') {
+                    return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+                } else {
+                    return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+                }
+            });
+
+            renderTable(filtered);
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterData);
+        document.getElementById('disciplineFilter').addEventListener('change', filterData);
+        document.getElementById('projectFilter').addEventListener('change', filterData);
+        document.getElementById('statusFilter').addEventListener('change', filterData);
+
+        document.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => sortTable(th.dataset.sort));
+        });
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>
