@@ -1,0 +1,370 @@
+{
+  "total_students": 245,
+  "allocated": 220,
+  "unallocated": 25,
+  "first_choice_satisfied": 177,
+  "second_choice_satisfied": 43,
+  "projects": {
+    "Project 01": {
+      "title": "Shared Fire, Shared Future",
+      "capacity": 24,
+      "allocated": 15,
+      "utilization": 62.5,
+      "disciplines": {
+        "PSD": 4,
+        "HCD": 2,
+        "CAC": 2,
+        "VCSB": 2,
+        "IAIDP": 1,
+        "CE": 1,
+        "IADP": 1,
+        "DMA": 1,
+        "BSSD": 1
+      },
+      "discipline_count": 9,
+      "diversity_score": 0.6,
+      "popularity": {
+        "choice_a": 13,
+        "choice_b": 5,
+        "total": 18
+      }
+    },
+    "Project 02": {
+      "title": "Between the Farm and the Forest",
+      "capacity": 20,
+      "allocated": 20,
+      "utilization": 100.0,
+      "disciplines": {
+        "VCSB": 7,
+        "IADP": 7,
+        "BSSD": 3,
+        "CAC": 1,
+        "IAIDP": 1,
+        "CE": 1
+      },
+      "discipline_count": 6,
+      "diversity_score": 0.3,
+      "popularity": {
+        "choice_a": 37,
+        "choice_b": 32,
+        "total": 69
+      }
+    },
+    "Project 03": {
+      "title": "Magrathea",
+      "capacity": 24,
+      "allocated": 24,
+      "utilization": 100.0,
+      "disciplines": {
+        "BSSD": 5,
+        "DMA": 4,
+        "CAP": 3,
+        "CAC": 3,
+        "HCD": 3,
+        "VCSB": 2,
+        "CE": 2,
+        "IAIDP": 1,
+        "IADP": 1
+      },
+      "discipline_count": 9,
+      "diversity_score": 0.38,
+      "popularity": {
+        "choice_a": 45,
+        "choice_b": 39,
+        "total": 84
+      }
+    },
+    "Project 04": {
+      "title": "Fool\u2019s Paradise",
+      "capacity": 24,
+      "allocated": 24,
+      "utilization": 100.0,
+      "disciplines": {
+        "VCSB": 9,
+        "DMA": 6,
+        "IADP": 3,
+        "CE": 2,
+        "IAIDP": 2,
+        "CAP": 1,
+        "PSD": 1
+      },
+      "discipline_count": 7,
+      "diversity_score": 0.29,
+      "popularity": {
+        "choice_a": 27,
+        "choice_b": 34,
+        "total": 61
+      }
+    },
+    "Project 05": {
+      "title": "Braiding",
+      "capacity": 10,
+      "allocated": 1,
+      "utilization": 10.0,
+      "disciplines": {
+        "PSD": 1
+      },
+      "discipline_count": 1,
+      "diversity_score": 1.0,
+      "popularity": {
+        "choice_a": 3,
+        "choice_b": 6,
+        "total": 9
+      }
+    },
+    "Project 06": {
+      "title": "Fabric of Urban Trees",
+      "capacity": 20,
+      "allocated": 2,
+      "utilization": 10.0,
+      "disciplines": {
+        "HCD": 1,
+        "IADP": 1
+      },
+      "discipline_count": 2,
+      "diversity_score": 1.0,
+      "popularity": {
+        "choice_a": 1,
+        "choice_b": 6,
+        "total": 7
+      }
+    },
+    "Project 07": {
+      "title": "City as Text",
+      "capacity": 18,
+      "allocated": 0,
+      "utilization": 0,
+      "disciplines": {},
+      "discipline_count": 0,
+      "diversity_score": 0,
+      "popularity": {
+        "choice_a": 3,
+        "choice_b": 3,
+        "total": 6
+      }
+    },
+    "Project 08": {
+      "title": "The Bahurupi",
+      "capacity": 18,
+      "allocated": 18,
+      "utilization": 100.0,
+      "disciplines": {
+        "CAP": 7,
+        "VCSB": 3,
+        "IAIDP": 2,
+        "CE": 2,
+        "DMA": 2,
+        "PSD": 1,
+        "BSSD": 1
+      },
+      "discipline_count": 7,
+      "diversity_score": 0.39,
+      "popularity": {
+        "choice_a": 18,
+        "choice_b": 23,
+        "total": 41
+      }
+    },
+    "Project 09": {
+      "title": "The Zen Mela",
+      "capacity": 20,
+      "allocated": 4,
+      "utilization": 20.0,
+      "disciplines": {
+        "CAC": 1,
+        "DMA": 1,
+        "BSSD": 1,
+        "CE": 1
+      },
+      "discipline_count": 4,
+      "diversity_score": 1.0,
+      "popularity": {
+        "choice_a": 4,
+        "choice_b": 7,
+        "total": 11
+      }
+    },
+    "Project 10": {
+      "title": "Rules Without Rulers",
+      "capacity": 24,
+      "allocated": 24,
+      "utilization": 100.0,
+      "disciplines": {
+        "HCD": 7,
+        "BSSD": 5,
+        "CAC": 5,
+        "IAIDP": 3,
+        "VCSB": 2,
+        "IADP": 2
+      },
+      "discipline_count": 6,
+      "diversity_score": 0.25,
+      "popularity": {
+        "choice_a": 21,
+        "choice_b": 11,
+        "total": 32
+      }
+    },
+    "Project 11": {
+      "title": "Pulse Quest AI",
+      "capacity": 18,
+      "allocated": 13,
+      "utilization": 72.2,
+      "disciplines": {
+        "HCD": 7,
+        "BSSD": 3,
+        "CAC": 2,
+        "IADP": 1
+      },
+      "discipline_count": 4,
+      "diversity_score": 0.31,
+      "popularity": {
+        "choice_a": 12,
+        "choice_b": 9,
+        "total": 21
+      }
+    },
+    "Project 12": {
+      "title": "The Music of Life",
+      "capacity": 20,
+      "allocated": 15,
+      "utilization": 75.0,
+      "disciplines": {
+        "CAC": 7,
+        "IAIDP": 3,
+        "VCSB": 2,
+        "HCD": 1,
+        "PSD": 1,
+        "BSSD": 1
+      },
+      "discipline_count": 6,
+      "diversity_score": 0.4,
+      "popularity": {
+        "choice_a": 11,
+        "choice_b": 19,
+        "total": 30
+      }
+    },
+    "Project 13": {
+      "title": "A Sense of Loss",
+      "capacity": 18,
+      "allocated": 18,
+      "utilization": 100.0,
+      "disciplines": {
+        "DMA": 5,
+        "VCSB": 4,
+        "FILM": 4,
+        "CAP": 3,
+        "IAIDP": 2
+      },
+      "discipline_count": 5,
+      "diversity_score": 0.28,
+      "popularity": {
+        "choice_a": 20,
+        "choice_b": 6,
+        "total": 26
+      }
+    },
+    "Project 14": {
+      "title": "Mountain, Matter and Meaning",
+      "capacity": 15,
+      "allocated": 2,
+      "utilization": 13.3,
+      "disciplines": {
+        "IADP": 2
+      },
+      "discipline_count": 1,
+      "diversity_score": 0.5,
+      "popularity": {
+        "choice_a": 3,
+        "choice_b": 5,
+        "total": 8
+      }
+    },
+    "Project 15": {
+      "title": "LEGO\u00ae AT PLAY",
+      "capacity": 24,
+      "allocated": 24,
+      "utilization": 100.0,
+      "disciplines": {
+        "VCSB": 11,
+        "IADP": 4,
+        "HCD": 3,
+        "IAIDP": 2,
+        "CE": 2,
+        "DMA": 1,
+        "PSD": 1
+      },
+      "discipline_count": 7,
+      "diversity_score": 0.29,
+      "popularity": {
+        "choice_a": 17,
+        "choice_b": 25,
+        "total": 42
+      }
+    },
+    "Project 16": {
+      "title": "Intelligent Mobility on the Ground",
+      "capacity": 16,
+      "allocated": 16,
+      "utilization": 100.0,
+      "disciplines": {
+        "IADP": 14,
+        "HCD": 2
+      },
+      "discipline_count": 2,
+      "diversity_score": 0.12,
+      "popularity": {
+        "choice_a": 10,
+        "choice_b": 15,
+        "total": 25
+      }
+    }
+  },
+  "disciplines": {
+    "BSSD": {
+      "total": 22,
+      "allocated": 20
+    },
+    "CAC": {
+      "total": 23,
+      "allocated": 21
+    },
+    "CAP": {
+      "total": 14,
+      "allocated": 14
+    },
+    "CE": {
+      "total": 13,
+      "allocated": 11
+    },
+    "DMA": {
+      "total": 26,
+      "allocated": 20
+    },
+    "FILM": {
+      "total": 5,
+      "allocated": 4
+    },
+    "HCD": {
+      "total": 27,
+      "allocated": 26
+    },
+    "IADP": {
+      "total": 40,
+      "allocated": 36
+    },
+    "IAIDP": {
+      "total": 19,
+      "allocated": 17
+    },
+    "PSD": {
+      "total": 9,
+      "allocated": 9
+    },
+    "VCSB": {
+      "total": 47,
+      "allocated": 42
+    }
+  }
+}
