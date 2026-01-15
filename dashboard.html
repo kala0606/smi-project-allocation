@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMI Project Allocation Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -360,14 +361,173 @@
                     // Continue to next path
                 }
             }
-            throw new Error('Could not find JSON file in any expected location');
+            return null; // Return null instead of throwing
+        }
+
+        // Try to load Excel file
+        async function loadExcelFile(filename) {
+            const paths = [
+                filename,
+                '../' + filename,
+                '../../' + filename
+            ];
+            
+            for (const tryPath of paths) {
+                try {
+                    const response = await fetch(tryPath);
+                    if (response.ok) {
+                        const arrayBuffer = await response.arrayBuffer();
+                        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                        return workbook;
+                    }
+                } catch (e) {
+                    // Continue to next path
+                }
+            }
+            return null;
+        }
+
+        // Parse Excel data and generate stats
+        function parseExcelData(workbook) {
+            // Read the first sheet
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+            
+            // Convert Excel data to our format
+            allData = jsonData.map(row => ({
+                Student_ID: row['Student_ID'] || row['Student ID'] || '',
+                Student_Name: row['Student_Name'] || row['Student Name'] || row['Name'] || '',
+                Student_Email: row['Student_Email'] || row['Student Email'] || row['Email'] || '',
+                Discipline: row['Discipline'] || '',
+                Choice_A: row['Choice_A'] || row['Choice A'] || '',
+                Choice_A_Title: row['Choice_A_Title'] || row['Choice A Title'] || '',
+                Choice_B: row['Choice_B'] || row['Choice B'] || '',
+                Choice_B_Title: row['Choice_B_Title'] || row['Choice B Title'] || '',
+                Assigned_Project: row['Assigned_Project'] || row['Assigned Project'] || '',
+                Assigned_Project_Title: row['Assigned_Project_Title'] || row['Assigned Project Title'] || '',
+                Timestamp: row['Timestamp'] || '',
+                Random: row['Random'] || ''
+            }));
+
+            // Generate stats from Excel data
+            stats = {
+                total_students: allData.length,
+                allocated: allData.filter(d => d.Assigned_Project && d.Assigned_Project.trim() !== '').length,
+                unallocated: allData.filter(d => !d.Assigned_Project || d.Assigned_Project.trim() === '').length,
+                first_choice_satisfied: allData.filter(d => d.Assigned_Project === d.Choice_A).length,
+                second_choice_satisfied: allData.filter(d => d.Assigned_Project === d.Choice_B).length,
+                projects: {}
+            };
+
+            // Calculate project statistics
+            const projectGroups = {};
+            allData.forEach(row => {
+                if (row.Assigned_Project && row.Assigned_Project.trim() !== '') {
+                    const projectId = row.Assigned_Project;
+                    if (!projectGroups[projectId]) {
+                        projectGroups[projectId] = {
+                            students: [],
+                            disciplines: {}
+                        };
+                    }
+                    projectGroups[projectId].students.push(row);
+                    if (row.Discipline) {
+                        projectGroups[projectId].disciplines[row.Discipline] = 
+                            (projectGroups[projectId].disciplines[row.Discipline] || 0) + 1;
+                    }
+                }
+            });
+
+            // Calculate popularity (before allocation)
+            const popularity = {};
+            allData.forEach(row => {
+                if (row.Choice_A) {
+                    popularity[row.Choice_A] = popularity[row.Choice_A] || {choice_a: 0, choice_b: 0, total: 0};
+                    popularity[row.Choice_A].choice_a++;
+                    popularity[row.Choice_A].total++;
+                }
+                if (row.Choice_B) {
+                    popularity[row.Choice_B] = popularity[row.Choice_B] || {choice_a: 0, choice_b: 0, total: 0};
+                    popularity[row.Choice_B].choice_b++;
+                    popularity[row.Choice_B].total++;
+                }
+            });
+
+            // Build project stats
+            Object.keys(projectGroups).forEach(projectId => {
+                const group = projectGroups[projectId];
+                const allocated = group.students.length;
+                const disciplineCount = Object.keys(group.disciplines).length;
+                
+                stats.projects[projectId] = {
+                    title: group.students[0]?.Assigned_Project_Title || projectId,
+                    capacity: allocated, // We don't have capacity from Excel, use allocated as estimate
+                    allocated: allocated,
+                    utilization: 100, // Can't calculate without capacity
+                    disciplines: group.disciplines,
+                    discipline_count: disciplineCount,
+                    diversity_score: allocated > 0 ? (disciplineCount / allocated).toFixed(2) : 0,
+                    popularity: popularity[projectId] || {choice_a: 0, choice_b: 0, total: 0}
+                };
+            });
+
+            // Add projects that were chosen but not allocated
+            Object.keys(popularity).forEach(projectId => {
+                if (!stats.projects[projectId]) {
+                    stats.projects[projectId] = {
+                        title: projectId,
+                        capacity: 0,
+                        allocated: 0,
+                        utilization: 0,
+                        disciplines: {},
+                        discipline_count: 0,
+                        diversity_score: 0,
+                        popularity: popularity[projectId]
+                    };
+                }
+            });
         }
 
         // Load data
         async function loadData() {
             try {
-                allData = await fetchJSON('allocation_data.json');
-                stats = await fetchJSON('allocation_stats.json');
+                // First try to load JSON files
+                const dataJSON = await fetchJSON('allocation_data.json');
+                const statsJSON = await fetchJSON('allocation_stats.json');
+                
+                if (dataJSON && statsJSON) {
+                    // JSON files found, use them
+                    allData = dataJSON;
+                    stats = statsJSON;
+                } else {
+                    // JSON files not found, try Excel file
+                    document.getElementById('loading').textContent = 'Loading from Excel file...';
+                    
+                    const excelFiles = [
+                        'Allocation_Output.xlsx',
+                        'Sheet3_Allocation_Output.xlsx',
+                        '../Allocation_Output.xlsx',
+                        '../Sheet3_Allocation_Output.xlsx',
+                        '../../Allocation_Output.xlsx',
+                        '../../Sheet3_Allocation_Output.xlsx'
+                    ];
+                    
+                    let workbook = null;
+                    for (const filename of excelFiles) {
+                        workbook = await loadExcelFile(filename);
+                        if (workbook) {
+                            console.log('Loaded Excel file:', filename);
+                            break;
+                        }
+                    }
+                    
+                    if (workbook) {
+                        parseExcelData(workbook);
+                    } else {
+                        throw new Error('Could not find JSON files or Excel file. Please ensure allocation_data.json, allocation_stats.json, or Allocation_Output.xlsx is available.');
+                    }
+                }
 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
@@ -380,8 +540,10 @@
             } catch (error) {
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('error').style.display = 'block';
-                document.getElementById('error').textContent = 'Error loading data: ' + error.message + 
-                    '<br><br>Make sure allocation_data.json and allocation_stats.json are in the same directory or parent directory.';
+                document.getElementById('error').innerHTML = 'Error loading data: ' + error.message + 
+                    '<br><br>Please ensure one of the following is available:<br>' +
+                    '• allocation_data.json and allocation_stats.json (preferred)<br>' +
+                    '• Allocation_Output.xlsx (fallback)';
             }
         }
 
