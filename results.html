@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMI Project Allocation Results 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .search-section {
+            padding: 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-box button {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-box button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-hint {
+            text-align: center;
+            margin-top: 15px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .result-section {
+            padding: 40px;
+            display: none;
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .student-info h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+
+        .student-info p {
+            color: #6c757d;
+            font-size: 1em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.discipline {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge.assigned {
+            background: #4caf50;
+            color: white;
+        }
+
+        .badge.choice-a {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .badge.choice-b {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .project-details {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .project-card.assigned {
+            border: 3px solid #4caf50;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        }
+
+        .project-card.choice-a {
+            border-left: 4px solid #ff9800;
+        }
+
+        .project-card.choice-b {
+            border-left: 4px solid #9c27b0;
+        }
+
+        .project-label {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6c757d;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .project-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .project-id {
+            font-size: 0.9em;
+            color: #6c757d;
+            font-family: 'Courier New', monospace;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .no-results h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .no-results p {
+            font-size: 1.1em;
+        }
+
+        .all-results-section {
+            padding: 40px;
+            display: none;
+        }
+
+        .all-results-section.active {
+            display: block;
+        }
+
+        .toggle-view {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .toggle-view button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .toggle-view button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .toggle-view button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .results-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .results-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .results-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .results-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .match-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .match-indicator.choice-a {
+            background: #ff9800;
+        }
+
+        .match-indicator.choice-b {
+            background: #9c27b0;
+        }
+
+        .match-indicator.no-match {
+            background: #9e9e9e;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                align-items: flex-start;
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .project-details {
+                justify-content: stretch;
+            }
+            
+            .project-card {
+                max-width: 100%;
+            }
+
+            .result-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .results-table {
+                font-size: 0.85em;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 SMI Project Allocation Results</h1>
+            <p>Academic Year 2025-26 | Semester 8</p>
+        </div>
+
+        <div class="toggle-view" style="display: none;">
+            <button id="searchBtn" class="active">Search Your Result</button>
+            <button id="allResultsBtn">View All Results</button>
+        </div>
+
+        <div class="search-section" id="searchSection">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Enter your Student ID, Name, or Email..." autocomplete="off">
+                <button onclick="searchStudent()">Search</button>
+            </div>
+            <div class="search-hint">
+                💡 You can search by Student ID (e.g., 225303032), Name, or Email address
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div id="resultContent"></div>
+        </div>
+
+        <div class="all-results-section" id="allResultsSection">
+            <div id="allResultsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let allocationData = [];
+
+        // Load data from JSON file
+        async function loadData() {
+            try {
+                const response = await fetch('allocation_data.json');
+                const data = await response.json();
+                allocationData = data;
+                console.log(`Loaded ${allocationData.length} student records`);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('resultContent').innerHTML = 
+                    '<div class="no-results"><h3>Error Loading Data</h3><p>Please ensure allocation_data.json is available.</p></div>';
+            }
+        }
+
+        // Search function
+        function searchStudent() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!query) {
+                alert('Please enter a search term');
+                return;
+            }
+
+            const results = allocationData.filter(student => {
+                const id = String(student.Student_ID || '').toLowerCase();
+                const name = (student.Student_Name || '').toLowerCase();
+                const email = (student.Student_Email || '').toLowerCase();
+                
+                return id.includes(query) || name.includes(query) || email.includes(query);
+            });
+
+            displayResults(results);
+        }
+
+        // Display search results
+        function displayResults(results) {
+            const resultContent = document.getElementById('resultContent');
+            const resultSection = document.getElementById('resultSection');
+
+            if (results.length === 0) {
+                resultContent.innerHTML = `
+                    <div class="no-results">
+                        <h3>No Results Found</h3>
+                        <p>Please check your search term and try again.</p>
+                    </div>
+                `;
+                resultSection.classList.add('active');
+                return;
+            }
+
+            let html = '';
+            results.forEach(student => {
+                const assignedProject = student.Assigned_Project || 'Not Assigned';
+                const assignedTitle = student.Assigned_Project_Title || 'N/A';
+
+                html += `
+                    <div class="result-card">
+                        <div class="result-header">
+                            <div class="student-info">
+                                <h2>${student.Student_Name || 'N/A'}</h2>
+                                <p>${student.Student_Email || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <span class="badge discipline">${student.Discipline || 'N/A'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="project-details">
+                            <div class="project-card assigned">
+                                <div class="project-label">🎯 Your Assigned Project</div>
+                                <div class="project-title">${assignedTitle}</div>
+                                <div class="project-id">${assignedProject}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultContent.innerHTML = html;
+            resultSection.classList.add('active');
+        }
+
+        // Display all results in table
+        function displayAllResults() {
+            const allResultsContent = document.getElementById('allResultsContent');
+            
+            let html = `
+                <h2 style="margin-bottom: 20px; color: #667eea;">All Allocation Results</h2>
+                <div style="overflow-x: auto;">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Discipline</th>
+                                <th>Choice A</th>
+                                <th>Choice B</th>
+                                <th>Assigned Project</th>
+                                <th>Match</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            allocationData.forEach(student => {
+                const assignedProject = student.Assigned_Project || 'Not Assigned';
+                const assignedTitle = student.Assigned_Project_Title || 'N/A';
+                const choiceA = student.Choice_A || 'N/A';
+                const choiceATitle = student.Choice_A_Title || 'N/A';
+                const choiceB = student.Choice_B || 'N/A';
+                const choiceBTitle = student.Choice_B_Title || 'N/A';
+                
+                const isChoiceA = assignedProject === choiceA;
+                const isChoiceB = assignedProject === choiceB;
+                const matchClass = isChoiceA ? 'choice-a' : (isChoiceB ? 'choice-b' : 'no-match');
+                const matchText = isChoiceA ? 'Choice A' : (isChoiceB ? 'Choice B' : 'Alternative');
+
+                html += `
+                    <tr>
+                        <td>${student.Student_ID || 'N/A'}</td>
+                        <td>${student.Student_Name || 'N/A'}</td>
+                        <td>${student.Discipline || 'N/A'}</td>
+                        <td>${choiceATitle}</td>
+                        <td>${choiceBTitle}</td>
+                        <td><strong>${assignedTitle}</strong><br><small style="color: #6c757d;">${assignedProject}</small></td>
+                        <td><span class="match-indicator ${matchClass}"></span>${matchText}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            allResultsContent.innerHTML = html;
+        }
+
+        // Toggle between search and all results
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('allResultsBtn').classList.remove('active');
+            document.getElementById('searchSection').style.display = 'block';
+            document.getElementById('resultSection').classList.add('active');
+            document.getElementById('allResultsSection').classList.remove('active');
+        });
+
+        document.getElementById('allResultsBtn').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('searchBtn').classList.remove('active');
+            document.getElementById('searchSection').style.display = 'none';
+            document.getElementById('resultSection').classList.remove('active');
+            document.getElementById('allResultsSection').classList.add('active');
+            displayAllResults();
+        });
+
+        // Allow Enter key to trigger search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchStudent();
+            }
+        });
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>
