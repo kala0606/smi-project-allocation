@@ -119,11 +119,18 @@
     "Project 04": {
       "title": "Fool’s Paradise",
       "capacity": 24,
-      "allocated": 0,
-      "utilization": 0.0,
-      "disciplines": {},
-      "discipline_count": 0,
-      "diversity_score": 0.0,
+      "allocated": 24,
+      "utilization": 100.0,
+      "disciplines": {
+        "DMA": 6,
+        "CE": 2,
+        "VCSB": 9,
+        "IAIDP": 4,
+        "CAP": 2,
+        "PSD": 1
+      },
+      "discipline_count": 6,
+      "diversity_score": 0.25,
       "popularity": {
         "choice_a": 27,
         "choice_b": 34,
