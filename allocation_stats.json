@@ -1,28 +1,73 @@
 {
-  "total_students": 245,
-  "allocated": 220,
-  "unallocated": 25,
-  "first_choice_satisfied": 177,
-  "second_choice_satisfied": 43,
+  "total_students": 268,
+  "allocated": 268,
+  "unallocated": 0,
+  "first_choice_satisfied": 162,
+  "second_choice_satisfied": 79,
+  "disciplines": {
+    "CAC": {
+      "total": 25,
+      "allocated": 25
+    },
+    "IADP": {
+      "total": 46,
+      "allocated": 46
+    },
+    "DMA": {
+      "total": 26,
+      "allocated": 26
+    },
+    "VCSB": {
+      "total": 52,
+      "allocated": 52
+    },
+    "CAP": {
+      "total": 14,
+      "allocated": 14
+    },
+    "PSD": {
+      "total": 11,
+      "allocated": 11
+    },
+    "HCD": {
+      "total": 29,
+      "allocated": 29
+    },
+    "IAIDP": {
+      "total": 22,
+      "allocated": 22
+    },
+    "CE": {
+      "total": 15,
+      "allocated": 15
+    },
+    "FILM": {
+      "total": 6,
+      "allocated": 6
+    },
+    "BSSD": {
+      "total": 22,
+      "allocated": 22
+    }
+  },
   "projects": {
     "Project 01": {
       "title": "Shared Fire, Shared Future",
       "capacity": 24,
-      "allocated": 15,
-      "utilization": 62.5,
+      "allocated": 10,
+      "utilization": 41.7,
       "disciplines": {
-        "PSD": 4,
-        "HCD": 2,
-        "CAC": 2,
-        "VCSB": 2,
-        "IAIDP": 1,
         "CE": 1,
+        "CAC": 1,
+        "VCSB": 2,
+        "IAIDP": 2,
         "IADP": 1,
+        "HCD": 1,
         "DMA": 1,
         "BSSD": 1
       },
-      "discipline_count": 9,
-      "diversity_score": 0.6,
+      "discipline_count": 8,
+      "diversity_score": 0.8,
       "popularity": {
         "choice_a": 13,
         "choice_b": 5,
@@ -32,18 +77,16 @@
     "Project 02": {
       "title": "Between the Farm and the Forest",
       "capacity": 20,
-      "allocated": 20,
-      "utilization": 100.0,
+      "allocated": 23,
+      "utilization": 115.0,
       "disciplines": {
+        "CAC": 4,
+        "IADP": 10,
         "VCSB": 7,
-        "IADP": 7,
-        "BSSD": 3,
-        "CAC": 1,
-        "IAIDP": 1,
-        "CE": 1
+        "BSSD": 2
       },
-      "discipline_count": 6,
-      "diversity_score": 0.3,
+      "discipline_count": 4,
+      "diversity_score": 0.17,
       "popularity": {
         "choice_a": 37,
         "choice_b": 32,
@@ -53,21 +96,20 @@
     "Project 03": {
       "title": "Magrathea",
       "capacity": 24,
-      "allocated": 24,
-      "utilization": 100.0,
+      "allocated": 25,
+      "utilization": 104.2,
       "disciplines": {
-        "BSSD": 5,
-        "DMA": 4,
-        "CAP": 3,
-        "CAC": 3,
-        "HCD": 3,
-        "VCSB": 2,
-        "CE": 2,
-        "IAIDP": 1,
-        "IADP": 1
+        "DMA": 8,
+        "CAP": 1,
+        "CE": 5,
+        "IADP": 3,
+        "VCSB": 4,
+        "IAIDP": 2,
+        "PSD": 1,
+        "BSSD": 1
       },
-      "discipline_count": 9,
-      "diversity_score": 0.38,
+      "discipline_count": 8,
+      "diversity_score": 0.32,
       "popularity": {
         "choice_a": 45,
         "choice_b": 39,
@@ -75,21 +117,13 @@
       }
     },
     "Project 04": {
-      "title": "Fool\u2019s Paradise",
+      "title": "Fool’s Paradise",
       "capacity": 24,
-      "allocated": 24,
-      "utilization": 100.0,
-      "disciplines": {
-        "VCSB": 9,
-        "DMA": 6,
-        "IADP": 3,
-        "CE": 2,
-        "IAIDP": 2,
-        "CAP": 1,
-        "PSD": 1
-      },
-      "discipline_count": 7,
-      "diversity_score": 0.29,
+      "allocated": 0,
+      "utilization": 0.0,
+      "disciplines": {},
+      "discipline_count": 0,
+      "diversity_score": 0.0,
       "popularity": {
         "choice_a": 27,
         "choice_b": 34,
@@ -99,13 +133,16 @@
     "Project 05": {
       "title": "Braiding",
       "capacity": 10,
-      "allocated": 1,
-      "utilization": 10.0,
+      "allocated": 9,
+      "utilization": 90.0,
       "disciplines": {
-        "PSD": 1
+        "PSD": 5,
+        "IAIDP": 2,
+        "CE": 1,
+        "DMA": 1
       },
-      "discipline_count": 1,
-      "diversity_score": 1.0,
+      "discipline_count": 4,
+      "diversity_score": 0.44,
       "popularity": {
         "choice_a": 3,
         "choice_b": 6,
@@ -115,14 +152,15 @@
     "Project 06": {
       "title": "Fabric of Urban Trees",
       "capacity": 20,
-      "allocated": 2,
-      "utilization": 10.0,
+      "allocated": 7,
+      "utilization": 35.0,
       "disciplines": {
-        "HCD": 1,
-        "IADP": 1
+        "CAP": 4,
+        "IADP": 2,
+        "HCD": 1
       },
-      "discipline_count": 2,
-      "diversity_score": 1.0,
+      "discipline_count": 3,
+      "diversity_score": 0.43,
       "popularity": {
         "choice_a": 1,
         "choice_b": 6,
@@ -132,11 +170,16 @@
     "Project 07": {
       "title": "City as Text",
       "capacity": 18,
-      "allocated": 0,
-      "utilization": 0,
-      "disciplines": {},
-      "discipline_count": 0,
-      "diversity_score": 0,
+      "allocated": 7,
+      "utilization": 38.9,
+      "disciplines": {
+        "BSSD": 2,
+        "HCD": 2,
+        "CAC": 2,
+        "IADP": 1
+      },
+      "discipline_count": 4,
+      "diversity_score": 0.57,
       "popularity": {
         "choice_a": 3,
         "choice_b": 3,
@@ -149,13 +192,13 @@
       "allocated": 18,
       "utilization": 100.0,
       "disciplines": {
-        "CAP": 7,
-        "VCSB": 3,
         "IAIDP": 2,
-        "CE": 2,
-        "DMA": 2,
+        "IADP": 1,
         "PSD": 1,
-        "BSSD": 1
+        "CAP": 5,
+        "VCSB": 5,
+        "BSSD": 3,
+        "CE": 1
       },
       "discipline_count": 7,
       "diversity_score": 0.39,
@@ -168,16 +211,20 @@
     "Project 09": {
       "title": "The Zen Mela",
       "capacity": 20,
-      "allocated": 4,
-      "utilization": 20.0,
+      "allocated": 14,
+      "utilization": 70.0,
       "disciplines": {
-        "CAC": 1,
-        "DMA": 1,
+        "DMA": 2,
+        "CE": 2,
+        "HCD": 1,
+        "CAC": 3,
+        "VCSB": 1,
         "BSSD": 1,
-        "CE": 1
+        "IADP": 3,
+        "CAP": 1
       },
-      "discipline_count": 4,
-      "diversity_score": 1.0,
+      "discipline_count": 8,
+      "diversity_score": 0.57,
       "popularity": {
         "choice_a": 4,
         "choice_b": 7,
@@ -190,11 +237,11 @@
       "allocated": 24,
       "utilization": 100.0,
       "disciplines": {
-        "HCD": 7,
-        "BSSD": 5,
-        "CAC": 5,
-        "IAIDP": 3,
-        "VCSB": 2,
+        "VCSB": 3,
+        "IAIDP": 4,
+        "CAC": 6,
+        "BSSD": 4,
+        "HCD": 5,
         "IADP": 2
       },
       "discipline_count": 6,
@@ -208,16 +255,16 @@
     "Project 11": {
       "title": "Pulse Quest AI",
       "capacity": 18,
-      "allocated": 13,
-      "utilization": 72.2,
+      "allocated": 18,
+      "utilization": 100.0,
       "disciplines": {
-        "HCD": 7,
-        "BSSD": 3,
-        "CAC": 2,
-        "IADP": 1
+        "HCD": 9,
+        "CAC": 4,
+        "IADP": 1,
+        "BSSD": 4
       },
       "discipline_count": 4,
-      "diversity_score": 0.31,
+      "diversity_score": 0.22,
       "popularity": {
         "choice_a": 12,
         "choice_b": 9,
@@ -227,18 +274,19 @@
     "Project 12": {
       "title": "The Music of Life",
       "capacity": 20,
-      "allocated": 15,
-      "utilization": 75.0,
+      "allocated": 21,
+      "utilization": 105.0,
       "disciplines": {
-        "CAC": 7,
+        "VCSB": 6,
+        "CAC": 5,
+        "HCD": 2,
         "IAIDP": 3,
-        "VCSB": 2,
-        "HCD": 1,
-        "PSD": 1,
-        "BSSD": 1
+        "DMA": 1,
+        "BSSD": 3,
+        "PSD": 1
       },
-      "discipline_count": 6,
-      "diversity_score": 0.4,
+      "discipline_count": 7,
+      "diversity_score": 0.33,
       "popularity": {
         "choice_a": 11,
         "choice_b": 19,
@@ -248,17 +296,16 @@
     "Project 13": {
       "title": "A Sense of Loss",
       "capacity": 18,
-      "allocated": 18,
-      "utilization": 100.0,
+      "allocated": 17,
+      "utilization": 94.4,
       "disciplines": {
-        "DMA": 5,
-        "VCSB": 4,
-        "FILM": 4,
-        "CAP": 3,
+        "DMA": 7,
+        "FILM": 6,
+        "VCSB": 2,
         "IAIDP": 2
       },
-      "discipline_count": 5,
-      "diversity_score": 0.28,
+      "discipline_count": 4,
+      "diversity_score": 0.24,
       "popularity": {
         "choice_a": 20,
         "choice_b": 6,
@@ -268,13 +315,15 @@
     "Project 14": {
       "title": "Mountain, Matter and Meaning",
       "capacity": 15,
-      "allocated": 2,
-      "utilization": 13.3,
+      "allocated": 8,
+      "utilization": 53.3,
       "disciplines": {
-        "IADP": 2
+        "IADP": 6,
+        "CAP": 1,
+        "VCSB": 1
       },
-      "discipline_count": 1,
-      "diversity_score": 0.5,
+      "discipline_count": 3,
+      "diversity_score": 0.38,
       "popularity": {
         "choice_a": 3,
         "choice_b": 5,
@@ -282,21 +331,21 @@
       }
     },
     "Project 15": {
-      "title": "LEGO\u00ae AT PLAY",
+      "title": "LEGO® AT PLAY",
       "capacity": 24,
-      "allocated": 24,
-      "utilization": 100.0,
+      "allocated": 28,
+      "utilization": 116.7,
       "disciplines": {
-        "VCSB": 11,
+        "HCD": 5,
+        "VCSB": 12,
+        "CE": 3,
         "IADP": 4,
-        "HCD": 3,
-        "IAIDP": 2,
-        "CE": 2,
-        "DMA": 1,
-        "PSD": 1
+        "PSD": 2,
+        "BSSD": 1,
+        "IAIDP": 1
       },
       "discipline_count": 7,
-      "diversity_score": 0.29,
+      "diversity_score": 0.25,
       "popularity": {
         "choice_a": 17,
         "choice_b": 25,
@@ -306,65 +355,19 @@
     "Project 16": {
       "title": "Intelligent Mobility on the Ground",
       "capacity": 16,
-      "allocated": 16,
-      "utilization": 100.0,
+      "allocated": 15,
+      "utilization": 93.8,
       "disciplines": {
-        "IADP": 14,
-        "HCD": 2
+        "IADP": 12,
+        "HCD": 3
       },
       "discipline_count": 2,
-      "diversity_score": 0.12,
+      "diversity_score": 0.13,
       "popularity": {
         "choice_a": 10,
         "choice_b": 15,
         "total": 25
       }
-    }
-  },
-  "disciplines": {
-    "BSSD": {
-      "total": 22,
-      "allocated": 20
-    },
-    "CAC": {
-      "total": 23,
-      "allocated": 21
-    },
-    "CAP": {
-      "total": 14,
-      "allocated": 14
-    },
-    "CE": {
-      "total": 13,
-      "allocated": 11
-    },
-    "DMA": {
-      "total": 26,
-      "allocated": 20
-    },
-    "FILM": {
-      "total": 5,
-      "allocated": 4
-    },
-    "HCD": {
-      "total": 27,
-      "allocated": 26
-    },
-    "IADP": {
-      "total": 40,
-      "allocated": 36
-    },
-    "IAIDP": {
-      "total": 19,
-      "allocated": 17
-    },
-    "PSD": {
-      "total": 9,
-      "allocated": 9
-    },
-    "VCSB": {
-      "total": 47,
-      "allocated": 42
     }
   }
 }

@@ -456,6 +456,7 @@
             results.forEach(student => {
                 const assignedProject = student.Assigned_Project || 'Not Assigned';
                 const assignedTitle = student.Assigned_Project_Title || 'N/A';
+                const room = student.Room || '';
 
                 html += `
                     <div class="result-card">
@@ -474,6 +475,7 @@
                                 <div class="project-label">🎯 Your Assigned Project</div>
                                 <div class="project-title">${assignedTitle}</div>
                                 <div class="project-id">${assignedProject}</div>
+                                ${room ? `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef;"><div style="font-size: 0.85em; color: #6c757d; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">📍 Assigned Room</div><div style="font-size: 1.2em; font-weight: 700; color: #667eea;">${room}</div></div>` : ''}
                             </div>
                         </div>
                     </div>
